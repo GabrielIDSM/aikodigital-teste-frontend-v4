@@ -32,3 +32,28 @@ html::-webkit-scrollbar-thumb {
 body {
   background-color: rgba(var(--cinereous), 0.2);
 }
+
+.Marcador > div {
+  padding: 5px;
+  border-radius: 8px;
+  border: solid 2px var(--cor);
+  background-color: rgba(var(--off-white), 1);
+  text-align: center;
+}
+
+.Marcador svg {
+  width: auto;
+  height: 30px;
+}
+
+.Marcador .Nome {
+  margin: 0;
+  font-size: 18px;
+  line-height: 24px;
+}
+
+.Marcador .Modelo {
+  margin: 0;
+  font-size: 12px;
+  line-height: 18px;
+}
