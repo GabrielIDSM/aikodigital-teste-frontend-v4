@@ -63,7 +63,12 @@ p {
   margin-top: 20px;
 }
 
+.Botoes {
+  margin-bottom: 10px;
+}
+
 .Botoes > button {
+  padding: 12px 8px;
   border-radius: 0;
   border-bottom: solid 1px rgba(var(--van-dyke), 0.2);
   font-size: 16px;
@@ -71,6 +76,7 @@ p {
   font-family: 'Roboto Condensed';
   line-height: 20px;
   color: rgba(var(--van-dyke), 0.9);
+  outline: none !important;
 }
 
 .Botoes > button.Ativo {
@@ -98,7 +104,7 @@ import Dashboard from '@/components/Dashboard.vue'
 const abaAtiva = shallowRef(HistoricoStatus)
 const abas = [
   { nome: 'Últimos status', component: HistoricoStatus },
-  { nome: 'Últimas localicações', component: HistoricoPosicoes },
+  { nome: 'Últimas localizações', component: HistoricoPosicoes },
   { nome: 'Dashboard', component: Dashboard },
 ]
 
