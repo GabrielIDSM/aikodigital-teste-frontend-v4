@@ -105,13 +105,13 @@ import type { Posicao, RegistroEstado } from '@/types/Equipamento'
 import { computed, ref, watch, nextTick } from 'vue'
 import HistoricoStatus from '@/components/HistoricoStatus.vue'
 import HistoricoPosicoes from '@/components/HistoricoPosicoes.vue'
-import Dashboard from '@/components/Dashboard.vue'
+import Estatisticas from '@/components/Estatisticas.vue'
 
 const abaAtiva = ref(0)
 const abas = [
   { nome: 'Últimos status', component: HistoricoStatus },
   { nome: 'Últimas localizações', component: HistoricoPosicoes },
-  { nome: 'Dashboard', component: Dashboard },
+  { nome: 'Estatísticas', component: Estatisticas },
 ]
 
 const equipamentoStore = useEquipamentoStore()

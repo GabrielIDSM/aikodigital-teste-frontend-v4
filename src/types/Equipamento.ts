@@ -33,3 +33,11 @@ export interface Equipamento {
   posicoes: Posicao[]
   exibirDetalhes?: boolean
 }
+
+export interface HorasPorStatus {
+  [key: string]: number
+}
+
+export interface GanhosPorStatus {
+  [key: string]: number
+}
