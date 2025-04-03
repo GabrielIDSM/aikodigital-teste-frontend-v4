@@ -32,10 +32,3 @@ html::-webkit-scrollbar-thumb {
 body {
   background-color: rgba(var(--cinereous), 0.2);
 }
-
-.Conteudo {
-  margin: 0 auto;
-  padding: 10px;
-  max-width: 980px;
-  width: 100%;
-}
