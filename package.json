@@ -37,6 +37,7 @@
     "bootstrap": "^5.3.3",
     "cypress": "^14.2.1",
     "leaflet": "^1.9.4",
+    "leaflet-arrowheads": "^1.4.0",
     "npm-run-all2": "^7.0.2",
     "prettier": "3.5.3",
     "start-server-and-test": "^2.0.11",

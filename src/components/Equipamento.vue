@@ -11,15 +11,22 @@
           <button
             v-for="(tab, index) in abas"
             :key="index"
-            @click="abaAtiva = tab.component"
+            @click="abaAtiva = index"
             class="btn"
-            :class="{ Ativo: abaAtiva === tab.component }"
+            :class="{ Ativo: abaAtiva === index }"
           >
             {{ tab.nome }}
           </button>
         </div>
         <div class="Conteudo">
-          <component :equipamento :is="abaAtiva" />
+          <div v-for="(tab, index) in abas" :key="index">
+            <component
+              v-if="abaAtiva === index"
+              :key="componentKey"
+              :is="tab.component"
+              :equipamento="equipamento"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -30,7 +37,6 @@
 section {
   padding: 40px 0;
   color: rgba(var(--van-dyke), 1);
-  scroll-margin-top: -200px;
 }
 
 section > div {
@@ -96,12 +102,12 @@ p {
 <script setup lang="ts">
 import { useEquipamentoStore } from '@/stores/equipamento'
 import type { Posicao, RegistroEstado } from '@/types/Equipamento'
-import { computed, ref, watch, shallowRef, nextTick } from 'vue'
+import { computed, ref, watch, nextTick } from 'vue'
 import HistoricoStatus from '@/components/HistoricoStatus.vue'
 import HistoricoPosicoes from '@/components/HistoricoPosicoes.vue'
 import Dashboard from '@/components/Dashboard.vue'
 
-const abaAtiva = shallowRef(HistoricoStatus)
+const abaAtiva = ref(0)
 const abas = [
   { nome: 'Últimos status', component: HistoricoStatus },
   { nome: 'Últimas localizações', component: HistoricoPosicoes },
@@ -111,6 +117,10 @@ const abas = [
 const equipamentoStore = useEquipamentoStore()
 const equipamento = computed(() => {
   return equipamentoStore.equipamentos.find((f) => f.exibirDetalhes)
+})
+
+const componentKey = computed(() => {
+  return `${equipamento.value?.id || 'no-equip'}-${abaAtiva.value}`
 })
 
 let ultimoStatus = ref<RegistroEstado>()

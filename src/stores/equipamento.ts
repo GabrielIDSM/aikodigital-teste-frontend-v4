@@ -7,7 +7,7 @@ import type {
   RegistroEstado,
 } from '@/types/Equipamento'
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 
 import equipment from '@/../data/equipment.json'
 import equipmentModel from '@/../data/equipmentModel.json'
@@ -81,7 +81,7 @@ export const useEquipamentoStore = defineStore('equipamento', () => {
         posicoes: posicoes,
       }
 
-      equipamentos.value.push(equipamento)
+      equipamentos.value.push(reactive(equipamento))
     })
   }
 

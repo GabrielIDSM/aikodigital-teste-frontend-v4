@@ -79,3 +79,14 @@ body {
 .Marcador.Selecionado {
   z-index: 800 !important;
 }
+
+.MarcadorHistoricoPosicao {
+  width: 45px !important;
+  height: 44px !important;
+}
+
+.MarcadorHistoricoPosicao > div {
+  width: 45px;
+  border: solid 2px rgba(var(--van-dyke), 1);
+  background-color: rgba(var(--off-white), 1);
+}
