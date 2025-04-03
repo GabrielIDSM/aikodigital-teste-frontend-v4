@@ -1,4 +1,6 @@
-export const Icons = {
+export type IconKeys = 'Caminhão de carga' | 'Harvester' | 'Garra traçadora'
+
+export const Icons: Record<IconKeys, string> = {
   'Caminhão de carga': `
     <svg version="1.1" id="Icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 32 32" xml:space="preserve">
     <style type="text/css">

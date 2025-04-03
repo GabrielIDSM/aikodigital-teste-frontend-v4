@@ -31,4 +31,5 @@ export interface Equipamento {
   modelo: Modelo
   registros: RegistroEstado[]
   posicoes: Posicao[]
+  exibirDetalhes?: boolean
 }

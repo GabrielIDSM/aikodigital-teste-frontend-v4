@@ -34,18 +34,70 @@ section > div {
 </style>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, onUnmounted, watch } from 'vue'
 import { useEquipamentoStore } from '@/stores/equipamento'
 import 'leaflet/dist/leaflet.css'
 import * as L from 'leaflet'
-import { map } from 'leaflet'
-import type { Posicao, RegistroEstado } from '@/types/Equipamento'
-import { Icons } from './icons/Icons'
+import type { Equipamento, Posicao, RegistroEstado } from '@/types/Equipamento'
+import { Icons, type IconKeys } from './icons/Icons'
 
 const equipamentoStore = useEquipamentoStore()
+let mapa: L.Map | null = null
+const markers: L.Marker[] = []
+
+const limparMarcadores = () => {
+  markers.forEach((marker) => marker.removeFrom(mapa!))
+  markers.length = 0
+}
+
+const criarMarcador = (e: Equipamento) => {
+  const ultimoStatus: RegistroEstado = e.registros[e.registros.length - 1]
+  const ultimaPosicao: Posicao = e.posicoes[e.posicoes.length - 1]
+  const div = document.createElement('div')
+
+  div.style.setProperty('--cor', ultimoStatus.estado.cor)
+  div.innerHTML = `
+    ${Icons[e.modelo.nome as IconKeys]}
+    <p class="Nome">${e.nome}</p>
+    <p class="Modelo">${e.modelo.nome}</p>
+  `
+
+  Object.assign(div.dataset, {
+    nome: e.nome,
+  })
+
+  const onClick = (e: MouseEvent) => {
+    e.stopPropagation()
+    const target = e.currentTarget as HTMLDivElement
+    equipamentoStore.exibirDetalhes(target.dataset.nome!)
+  }
+
+  div.addEventListener('click', onClick)
+
+  const customIcon = L.divIcon({
+    className: `Marcador ${e.exibirDetalhes ? 'Selecionado' : 'Desselecionado'}`,
+    html: div,
+    iconSize: [130, 80],
+    iconAnchor: [0, 0],
+  })
+
+  return L.marker([ultimaPosicao.latitude, ultimaPosicao.longitude], { icon: customIcon })
+}
+
+const atualizarMarcadores = () => {
+  if (!mapa) return
+
+  limparMarcadores()
+
+  equipamentoStore.equipamentos.forEach((e) => {
+    const marker = criarMarcador(e)
+    marker.addTo(mapa!)
+    markers.push(marker)
+  })
+}
 
 onMounted(() => {
-  const mapa = map('mapa', {
+  mapa = L.map('mapa', {
     zoom: 11,
     center: [-19.1, -46.0],
   })
@@ -55,39 +107,21 @@ onMounted(() => {
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   }).addTo(mapa)
 
-  equipamentoStore.equipamentos.forEach((e) => {
-    const ultimoStatus: RegistroEstado = e.registros[e.registros.length - 1]
-    const ultimaPosicao: Posicao = e.posicoes[e.posicoes.length - 1]
+  atualizarMarcadores()
+})
 
-    let svg
-    switch (e.modelo.nome) {
-      case 'Caminhão de carga':
-        svg = Icons['Caminhão de carga']
-        break
-      case 'Harvester':
-        svg = Icons['Harvester']
-        break
-      case 'Garra traçadora':
-        svg = Icons['Garra traçadora']
-        break
-    }
+watch(
+  () => equipamentoStore.equipamentos,
+  () => {
+    atualizarMarcadores()
+  },
+  { deep: true },
+)
 
-    const div = document.createElement('div')
-    div.style.setProperty('--cor', ultimoStatus.estado.cor)
-    div.innerHTML = `
-      ${svg}
-      <p class="Nome">${e.nome}</p>
-      <p class="Modelo">${e.modelo.nome}</p>
-    `
-
-    let customIcon = L.divIcon({
-      className: 'Marcador',
-      html: div,
-      iconSize: [130, 80],
-      iconAnchor: [130, 80],
-    })
-
-    L.marker([ultimaPosicao.latitude, ultimaPosicao.longitude], { icon: customIcon }).addTo(mapa)
-  })
+onUnmounted(() => {
+  if (mapa) {
+    mapa.remove()
+    mapa = null
+  }
 })
 </script>

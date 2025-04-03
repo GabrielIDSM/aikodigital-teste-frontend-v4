@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div></div>
+    <div v-if="exibirDetalhes"></div>
   </section>
 </template>
 
@@ -22,3 +22,19 @@ section > div {
   gap: 20px;
 }
 </style>
+
+<script setup lang="ts">
+import { useEquipamentoStore } from '@/stores/equipamento'
+import type { Equipamento } from '@/types/Equipamento'
+import { computed } from 'vue'
+
+const equipamentoStore = useEquipamentoStore()
+
+const exibirDetalhes = computed(() => {
+  const equipamento: Equipamento | undefined = equipamentoStore.equipamentos.find(
+    (f) => f.exibirDetalhes,
+  )
+
+  return equipamento != undefined && equipamento.exibirDetalhes!
+})
+</script>

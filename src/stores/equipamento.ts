@@ -85,7 +85,18 @@ export const useEquipamentoStore = defineStore('equipamento', () => {
     })
   }
 
+  const exibirDetalhes = (nome: string) => {
+    const equipamento: Equipamento = equipamentos.value.find((f) => f.nome == nome)!
+
+    equipamentos.value.filter((f) => f.nome != nome).forEach((e) => (e.exibirDetalhes = false))
+    equipamento.exibirDetalhes = !equipamento.exibirDetalhes
+  }
+
+  const ocultarDetalhes = (nome: string) => {
+    equipamentos.value.find((f) => f.nome == nome)!.exibirDetalhes = false
+  }
+
   carregarEquipamentos()
 
-  return { equipamentos }
+  return { equipamentos, exibirDetalhes, ocultarDetalhes }
 })

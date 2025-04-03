@@ -33,9 +33,13 @@ body {
   background-color: rgba(var(--cinereous), 0.2);
 }
 
+.Marcador {
+  transition: all 200ms;
+}
+
 .Marcador > div {
   padding: 5px;
-  border-radius: 8px;
+  border-radius: 0px 12px 12px 12px;
   border: solid 2px var(--cor);
   background-color: rgba(var(--off-white), 1);
   text-align: center;
@@ -56,4 +60,22 @@ body {
   margin: 0;
   font-size: 12px;
   line-height: 18px;
+}
+
+.Marcador.Desselecionado {
+  opacity: 0.85;
+  width: 45px !important;
+  height: 44px !important;
+}
+
+.Marcador.Desselecionado > div {
+  width: 45px;
+}
+
+.Marcador.Desselecionado p {
+  display: none;
+}
+
+.Marcador.Selecionado {
+  z-index: 800 !important;
 }
