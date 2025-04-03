@@ -32,8 +32,8 @@ section > div {
 p {
   margin: 0;
   margin-bottom: 10px;
-  font-size: 20px;
-  line-height: 27px;
+  font-size: 18px;
+  line-height: 24px;
 }
 
 span {
