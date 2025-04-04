@@ -1,5 +1,11 @@
 <template>
-  <svg width="478.2" height="131.79658536585364" viewBox="0 0 410 113" class="looka-1j8o68f">
+  <svg
+    id="Logo"
+    width="478.2"
+    height="131.79658536585364"
+    viewBox="0 0 410 113"
+    class="looka-1j8o68f"
+  >
     <defs id="SvgjsDefs1467"></defs>
     <g id="SvgjsG1468" featurekey="symbolContainer" transform="matrix(1,0,0,1,0,0)" fill="#3f292c">
       <rect xmlns="http://www.w3.org/2000/svg" width="90" height="113" rx="10" ry="10"></rect>
