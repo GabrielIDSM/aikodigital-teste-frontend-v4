@@ -23,12 +23,12 @@
     </p>
   </div>
   <div class="Container">
-    <div class="Doughnut">
-      <DoughnutChart :chartData="chartDataDoughnut" :options="chartOptionsDoughnut" />
-    </div>
-    <div class="Bar">
-      <BarChart :chartData="chartDataBar" :options="chartOptionsBar" />
-    </div>
+    <Disponibilidade :equipamento="equipamento" :horas-por-status="horasPorStatus" />
+    <GanhoPorStatus
+      :equipamento="equipamento"
+      :ganhos-por-status="ganhosPorStatus"
+      :horas-por-status="horasPorStatus"
+    />
   </div>
 </template>
 
@@ -39,21 +39,19 @@
 }
 
 .Resumo {
-  margin: 0;
-  margin-bottom: 10px;
+  margin: 15px 0;
   font-size: 16px;
   line-height: 24px;
   color: rgba(var(--van-dyke), 1);
   text-align: center;
 }
 
-.Resumo span {
-  font-weight: 500;
+.Resumo p {
+  margin: 0;
 }
 
-.Doughnut,
-.Bar {
-  flex: 1;
+.Resumo span {
+  font-weight: 500;
 }
 
 @media (max-width: 980px) {
@@ -64,14 +62,11 @@
 </style>
 
 <script setup lang="ts">
-import { computed, ref, type PropType } from 'vue'
+import GanhoPorStatus from '../components/charts/GanhoPorStatus.vue'
+import Disponibilidade from '../components/charts/Disponibilidade.vue'
+import { computed, type PropType } from 'vue'
 import type { Equipamento, GanhosPorStatus, HorasPorStatus } from '@/types/Equipamento'
-import { useCorStore } from '@/stores/cor'
-import { DoughnutChart, BarChart } from 'vue-chart-3'
-import { Chart, registerables, type ChartData } from 'chart.js'
 import { DateTime } from 'luxon'
-
-Chart.register(...registerables)
 
 const props = defineProps({
   equipamento: {
@@ -80,130 +75,31 @@ const props = defineProps({
   },
 })
 
-const corStore = useCorStore()
+const horasPorStatus: HorasPorStatus = {}
 
-const horasPorStatus = computed(() => {
-  const horasPorStatus: HorasPorStatus = {}
+for (let i = 1; i < props.equipamento.registros.length; i++) {
+  const registroAnterior = props.equipamento.registros[i - 1]
+  const registroAtual = props.equipamento.registros[i]
+  const inicio = DateTime.fromJSDate(registroAnterior.data)
+  const fim = DateTime.fromJSDate(registroAtual.data)
+  const duracao = fim.diff(inicio, 'hours').hours
 
-  for (let i = 1; i < props.equipamento.registros.length; i++) {
-    const registroAnterior = props.equipamento.registros[i - 1]
-    const registroAtual = props.equipamento.registros[i]
-    const inicio = DateTime.fromJSDate(registroAnterior.data)
-    const fim = DateTime.fromJSDate(registroAtual.data)
-    const duracao = fim.diff(inicio, 'hours').hours
-
-    if (!horasPorStatus[registroAnterior.estado.nome]) {
-      horasPorStatus[registroAnterior.estado.nome] = 0
-    }
-
-    horasPorStatus[registroAnterior.estado.nome] += duracao
+  if (!horasPorStatus[registroAnterior.estado.nome]) {
+    horasPorStatus[registroAnterior.estado.nome] = 0
   }
 
-  return horasPorStatus
-})
+  horasPorStatus[registroAnterior.estado.nome] += duracao
+}
 
-const ganhosPorStatus = computed(() => {
-  const ganhosPorStatus: GanhosPorStatus = {
-    Operando: 0,
-    Parado: 0,
-    Manutenção: 0,
-  }
+const ganhosPorStatus: GanhosPorStatus = {
+  Operando: 0,
+  Parado: 0,
+  Manutenção: 0,
+}
 
-  Object.keys(horasPorStatus.value).forEach((hs) => {
-    const horas = horasPorStatus.value[hs]
-    const ganhoPorHora = props.equipamento.modelo.ganhos.find((f) => f.estado.nome == hs)!.valor
-    ganhosPorStatus[hs] = horas * ganhoPorHora
-  })
-
-  return ganhosPorStatus
-})
-
-const chartDataDoughnut = computed<ChartData<'doughnut', number[], string>>(() => ({
-  labels: Object.keys(horasPorStatus.value),
-  datasets: [
-    {
-      data: Object.values(horasPorStatus.value),
-      backgroundColor: Object.keys(horasPorStatus.value).map((k) => corStore.obterCorPorStatus(k)),
-      borderRadius: 8,
-    },
-  ],
-}))
-
-const chartOptionsDoughnut = ref({
-  responsive: true,
-  plugins: {
-    legend: {
-      position: 'bottom' as const,
-    },
-    title: {
-      display: true,
-      text: 'Disponibilidade',
-      font: {
-        size: 16,
-      },
-      color: '#3F292C',
-    },
-    tooltip: {
-      callbacks: {
-        label: (context: any) => {
-          const label = context.label || ''
-          const value = context.raw || 0
-          const total = context.dataset.data.reduce((a: number, b: number) => a + b, 0)
-          const percentage = Math.round((value / total) * 100)
-          return `${label}: ${value}h (${percentage}%)`
-        },
-      },
-    },
-  },
-  cutout: '70%',
-  animation: {
-    animateScale: true,
-    animateRotate: true,
-  },
-})
-
-const chartDataBar = computed<ChartData<'bar', number[], string>>(() => ({
-  labels: Object.keys(ganhosPorStatus.value),
-  datasets: [
-    {
-      data: Object.values(ganhosPorStatus.value),
-      backgroundColor: Object.keys(ganhosPorStatus.value).map((k) => corStore.obterCorPorStatus(k)),
-      borderRadius: 8,
-    },
-  ],
-}))
-
-const chartOptionsBar = ref({
-  responsive: true,
-  plugins: {
-    title: {
-      display: true,
-      text: 'Ganho por status',
-      font: { size: 16 },
-      color: '#3F292C',
-    },
-    legend: {
-      display: false,
-    },
-  },
-  scales: {
-    y: {
-      beginAtZero: true,
-      title: {
-        display: true,
-        text: 'Ganho',
-      },
-    },
-    x: {
-      title: {
-        display: true,
-        text: 'Status',
-      },
-    },
-  },
-  animation: {
-    animateScale: true,
-    animateRotate: true,
-  },
+Object.keys(horasPorStatus).forEach((hs) => {
+  const horas = horasPorStatus[hs]
+  const ganhoPorHora = props.equipamento.modelo.ganhos.find((f) => f.estado.nome == hs)!.valor
+  ganhosPorStatus[hs] = horas * ganhoPorHora
 })
 </script>
