@@ -58,7 +58,7 @@ Tree Metrics é uma aplicação Vue 3 + TypeScript criado com Vite que utiliza a
 ### Desktop
 
 ![Página inicial](media/desktop/Home.png)
-![Equipamento escolhido](media/desktop/Equipamento.png.png)
+![Equipamento escolhido](media/desktop/Equipamento.png)
 
 ### Mobile
 
