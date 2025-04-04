@@ -14,11 +14,17 @@ import equipmentModel from '@/../data/equipmentModel.json'
 import equipmentPositionHistory from '@/../data/equipmentPositionHistory.json'
 import equipmentState from '@/../data/equipmentState.json'
 import equipmentStateHistory from '@/../data/equipmentStateHistory.json'
+import type { Filtro } from '@/types/Filtro'
 
 export const useEquipamentoStore = defineStore('equipamento', () => {
   const equipamentos = ref<Equipamento[]>([])
+  const filtro = ref<Filtro>({
+    'Nome do equipamento': '',
+    Modelo: '',
+    'Último status': '',
+  })
 
-  const carregarEquipamentos = () => {
+  const _carregarEquipamentos = () => {
     equipment.forEach((e) => {
       let model = equipmentModel.find((f) => f.id == e.equipmentModelId)
       let ganhos: Ganho[] = []
@@ -85,6 +91,39 @@ export const useEquipamentoStore = defineStore('equipamento', () => {
     })
   }
 
+  const _filtrar = () => {
+    equipamentos.value.forEach((e) => {
+      const ultimoStatus: RegistroEstado = e.registros[e.registros.length - 1]
+      let exibirEquipamento = true
+
+      if (!e.nome.includes(filtro.value['Nome do equipamento'])) {
+        exibirEquipamento = false
+      }
+
+      if (
+        filtro.value.Modelo !== null &&
+        filtro.value.Modelo.length > 0 &&
+        filtro.value.Modelo != e.modelo.nome
+      ) {
+        exibirEquipamento = false
+      }
+
+      if (
+        filtro.value['Último status'] !== null &&
+        filtro.value['Último status'].length > 0 &&
+        filtro.value['Último status'] != ultimoStatus.estado.nome
+      ) {
+        exibirEquipamento = false
+      }
+
+      e.exibirNoMapaAoVivo = exibirEquipamento
+
+      if (!e.exibirNoMapaAoVivo && e.exibirDetalhes) {
+        e.exibirDetalhes = false
+      }
+    })
+  }
+
   const exibirDetalhes = (nome: string) => {
     const equipamento: Equipamento = equipamentos.value.find((f) => f.nome == nome)!
 
@@ -96,7 +135,39 @@ export const useEquipamentoStore = defineStore('equipamento', () => {
     equipamentos.value.find((f) => f.nome == nome)!.exibirDetalhes = false
   }
 
-  carregarEquipamentos()
+  const listarModelos = () => {
+    return equipmentModel.map((m) => m.name)
+  }
 
-  return { equipamentos, exibirDetalhes, ocultarDetalhes }
+  const listarStatus = () => {
+    return equipmentState.map((m) => m.name)
+  }
+
+  const filtrarPorNome = (nome: string) => {
+    filtro.value['Nome do equipamento'] = nome
+    _filtrar()
+  }
+
+  const filtrarPorModelo = (modelo: string) => {
+    filtro.value.Modelo = modelo
+    _filtrar()
+  }
+
+  const filtrarPorUltimoStatus = (ultimoStatus: string) => {
+    filtro.value['Último status'] = ultimoStatus
+    _filtrar()
+  }
+
+  _carregarEquipamentos()
+
+  return {
+    equipamentos,
+    exibirDetalhes,
+    ocultarDetalhes,
+    listarModelos,
+    listarStatus,
+    filtrarPorNome,
+    filtrarPorModelo,
+    filtrarPorUltimoStatus,
+  }
 })

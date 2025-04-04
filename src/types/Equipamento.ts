@@ -32,6 +32,7 @@ export interface Equipamento {
   registros: RegistroEstado[]
   posicoes: Posicao[]
   exibirDetalhes?: boolean
+  exibirNoMapaAoVivo?: boolean
 }
 
 export interface HorasPorStatus {

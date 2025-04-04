@@ -90,3 +90,16 @@ body {
   border: solid 2px rgba(var(--van-dyke), 1);
   background-color: rgba(var(--off-white), 1);
 }
+
+.vs--searchable .vs__dropdown-toggle {
+  height: 35px;
+}
+
+.vs__dropdown-toggle {
+  border: solid 1px rgba(var(--cinereous), 0.2) !important;
+}
+
+.vs__open-indicator,
+.vs__clear {
+  fill: rgba(var(--cinereous), 1) !important;
+}

@@ -1,6 +1,7 @@
 <template>
   <section>
-    <div>
+    <div class="Container">
+      <Filtro />
       <div id="mapa"></div>
     </div>
   </section>
@@ -14,7 +15,7 @@ section {
   text-align: center;
 }
 
-section > div {
+.Container {
   margin: 0 auto;
   padding: 10px;
   max-width: 980px;
@@ -22,18 +23,19 @@ section > div {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
 }
 
 #mapa {
   width: 100%;
   aspect-ratio: 4 / 3;
-  border-radius: 8px;
+  border-radius: 0px 0px 8px 8px;
   border: solid 2px rgba(var(--cinereous), 0.5);
+  border-top: none;
 }
 </style>
 
 <script setup lang="ts">
+import Filtro from './Filtro.vue'
 import { onMounted, onUnmounted, watch } from 'vue'
 import { useEquipamentoStore } from '@/stores/equipamento'
 import 'leaflet/dist/leaflet.css'
@@ -90,9 +92,11 @@ const atualizarMarcadores = () => {
   limparMarcadores()
 
   equipamentoStore.equipamentos.forEach((e) => {
-    const marker = criarMarcador(e)
-    marker.addTo(mapa!)
-    markers.push(marker)
+    if (!(e.exibirNoMapaAoVivo === false)) {
+      const marker = criarMarcador(e)
+      marker.addTo(mapa!)
+      markers.push(marker)
+    }
   })
 }
 

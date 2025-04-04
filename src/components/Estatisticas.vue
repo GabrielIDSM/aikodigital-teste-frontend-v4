@@ -62,9 +62,9 @@
 </style>
 
 <script setup lang="ts">
-import GanhoPorStatus from '../components/charts/GanhoPorStatus.vue'
-import Disponibilidade from '../components/charts/Disponibilidade.vue'
-import { computed, type PropType } from 'vue'
+import GanhoPorStatus from './charts/GanhoPorStatus.vue'
+import Disponibilidade from './charts/Disponibilidade.vue'
+import type { PropType } from 'vue'
 import type { Equipamento, GanhosPorStatus, HorasPorStatus } from '@/types/Equipamento'
 import { DateTime } from 'luxon'
 
